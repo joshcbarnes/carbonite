@@ -1,17 +1,17 @@
 package com.allocadia.carbonite;
 
-import javax.sql.DataSource;
-
 import lombok.Data;
+
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+
+import com.allocadia.carbonite.transaction.CarboniteTransactionManager;
 
 @Data
 public class Carbonite {
 
-    private DataSource dataSource;
+    private CarboniteTransactionManager txManager;
     
-    public <T> CarboniteQuery<T> newQuery(Class<T> resultClass) {
-        CarboniteQuery<T> carboniteQuery = new CarboniteQuery<T>(resultClass);
-        carboniteQuery.setDataSource(dataSource);
-        return carboniteQuery;
+    public CarboniteObjectManager getObjectManager() {
+        return (CarboniteObjectManager) TransactionSynchronizationManager.getResource(txManager.getDataSource());
     }
 }
