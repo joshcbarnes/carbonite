@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
-@Target(value = ElementType.FIELD)
-public @interface Persist {
-    String column() default "";
+@Target(value = ElementType.TYPE)
+public @interface Carbonated {
+
 }
