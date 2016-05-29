@@ -28,30 +28,34 @@ public class CarboniteTransactionManager extends AbstractPlatformTransactionMana
 
     @Override
     protected void doBegin(Object transaction, TransactionDefinition definition) throws TransactionException {
-        TransactionSynchronizationManager.bindResource(getDataSource(), newObjectManager());
+        TransactionSynchronizationManager.bindResource(getOMKey(), newObjectManager());
     }
 
     @Override
     protected void doCommit(DefaultTransactionStatus status) throws TransactionException {
-        TransactionSynchronizationManager.unbindResource(getDataSource());
+        TransactionSynchronizationManager.unbindResource(getOMKey());
     }
 
     @Override
     protected void doRollback(DefaultTransactionStatus status) throws TransactionException {
-        TransactionSynchronizationManager.unbindResource(getDataSource());
+        TransactionSynchronizationManager.unbindResource(getOMKey());
     }
     
     @Override
     protected Object doSuspend(Object transaction) throws TransactionException {
-        return TransactionSynchronizationManager.unbindResource(getDataSource());
+        return TransactionSynchronizationManager.unbindResource(getOMKey());
     }
     
     @Override
     protected void doResume(Object transaction, Object suspendedResources) throws TransactionException {
-        TransactionSynchronizationManager.unbindResource(getDataSource());
-        TransactionSynchronizationManager.bindResource(getDataSource(), suspendedResources);
+        TransactionSynchronizationManager.unbindResource(getOMKey());
+        TransactionSynchronizationManager.bindResource(getOMKey(), suspendedResources);
     }
 
+    private Object getOMKey() {
+        return getDataSource().toString();
+    }
+    
     protected CarboniteObjectManager newObjectManager() {
         return new CarboniteObjectManager(dataSource);
     }

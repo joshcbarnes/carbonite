@@ -28,7 +28,7 @@ public class DynamicRowMapper<T> implements RowMapper<T> {
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @SneakyThrows
     @Override
-    public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+    public T mapRow(ResultSet rs, int rowNum) {
         T result = (T) resultClass.newInstance();
         
         ResultSetMetaData metadata = rs.getMetaData();
