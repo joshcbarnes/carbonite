@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableMap;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Objects;
 
 import lombok.Data;
 
@@ -11,16 +12,16 @@ import lombok.Data;
 public final class PersistenceInfo<T> {
     private final Class<T> clazz;
     private final String idField;
-    private final Map<String, Field> column2field;
+    private final ImmutableMap<String, Field> column2field;
 
-    public PersistenceInfo(Class<T> clazz, Map<String, Field> fields, String idField) {
-        this(fields, idField, clazz);
+    public PersistenceInfo(Class<T> clazz, ImmutableMap<String, Field> fields, String idField) {
+        this(fields, idField, Objects.requireNonNull(clazz));
 
         fields.values().forEach(field -> field.setAccessible(true));
     }
 
     //Private version that does not do any validation / modifying of fields
-    private PersistenceInfo(Map<String, Field> fields, String idField, Class<T> clazz) {
+    private PersistenceInfo(ImmutableMap<String, Field> fields, String idField, Class<T> clazz) {
         this.clazz = clazz;
         this.idField = idField;
         this.column2field = fields;

@@ -8,15 +8,13 @@ import com.allocadia.carbonite.annotation.Carbonated;
 import com.allocadia.carbonite.annotation.Id;
 import com.allocadia.carbonite.annotation.Persist;
 import com.allocadia.carbonite.utils.QueryUtils;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Iterators;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import lombok.SneakyThrows;
 
@@ -66,19 +64,24 @@ public class ClassScanner {
         );
     }
 
-    private static Map<String, Field> getFields(Class<?> clazz) {
-        return Arrays.stream(clazz.getDeclaredFields())
-            .filter(field -> field.isAnnotationPresent(Persist.class) || field.isAnnotationPresent(Id.class))
-            .collect(Collectors.toMap(
-                field -> {
-                    Persist p = field.getAnnotation(Persist.class);
-                    if (null != p && !p.column().isEmpty()) {
-                        return p.column();
-                    }
+    private static ImmutableMap<String, Field> getFields(Class<?> clazz) {
+        ImmutableMap.Builder<String, Field> builder = ImmutableMap.builder();
 
-                    return QueryUtils.camel2underscore(field.getName());
-                },
-                Function.identity()
-            ));
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(Persist.class) || field.isAnnotationPresent(Id.class)) {
+                final String name;
+
+                final Persist p = field.getAnnotation(Persist.class);
+                if (null != p && !p.column().isEmpty()) {
+                    name = p.column();
+                } else {
+                    name = QueryUtils.camel2underscore(field.getName());
+                }
+
+                builder.put(name, field);
+            }
+        }
+
+        return builder.build();
     }
 }
