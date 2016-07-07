@@ -29,7 +29,7 @@ public class ResultSetReaderTest {
         MockitoAnnotations.initMocks(this);
         reader = new ResultSetReader<>(new PersistenceInfo<>(TestClass.class, ImmutableMap.of(
             COLUMN_LABEL, TestClass.class.getDeclaredField("stringField")
-        )));
+        ), "ID"));
         
         Mockito.when(resultSet.next()).thenThrow(new Error("Should never call ResultSet.next when processing a single row!"));
     }

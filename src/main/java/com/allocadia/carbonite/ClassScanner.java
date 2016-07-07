@@ -5,8 +5,10 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
 import com.allocadia.carbonite.annotation.Carbonated;
+import com.allocadia.carbonite.annotation.Id;
 import com.allocadia.carbonite.annotation.Persist;
 import com.allocadia.carbonite.utils.QueryUtils;
+import com.google.common.collect.Iterators;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -44,17 +46,33 @@ public class ClassScanner {
     }
 
     public static <T> PersistenceInfo<T> createPersistentInfo(Class<T> clazz) {
-        return new PersistenceInfo<>(clazz, getFields(clazz));
+        return new PersistenceInfo<>(clazz, getFields(clazz), getIdField(clazz));
+    }
+
+    private static String getIdField(Class<?> clazz) {
+        return Iterators.getOnlyElement(
+            Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(Id.class))
+                .map(field -> {
+                    Persist p = field.getAnnotation(Persist.class);
+                    if (null != p && !p.column().isEmpty()) {
+                        return p.column();
+                    }
+    
+                    return QueryUtils.camel2underscore(field.getName());
+                })
+                .iterator(),
+            null
+        );
     }
 
     private static Map<String, Field> getFields(Class<?> clazz) {
         return Arrays.stream(clazz.getDeclaredFields())
-            .filter(field -> field.isAnnotationPresent(Persist.class))
+            .filter(field -> field.isAnnotationPresent(Persist.class) || field.isAnnotationPresent(Id.class))
             .collect(Collectors.toMap(
                 field -> {
                     Persist p = field.getAnnotation(Persist.class);
-
-                    if (!p.column().isEmpty()) {
+                    if (null != p && !p.column().isEmpty()) {
                         return p.column();
                     }
 

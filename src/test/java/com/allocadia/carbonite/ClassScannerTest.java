@@ -1,9 +1,15 @@
 package com.allocadia.carbonite;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
+import com.allocadia.carbonite.annotation.Carbonated;
+import com.allocadia.carbonite.annotation.Id;
+import com.allocadia.carbonite.annotation.Persist;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -38,5 +44,54 @@ public class ClassScannerTest {
 
         assertFalse(columnNames.contains("CUSTOM_COLUMN_NAME"));
         assertTrue(columnNames.containsAll(Arrays.asList("field_NAME")));
+    }
+    
+    @Test
+    public void shouldReadIdAnnotation() {
+        PersistenceInfo<TestClass> pi = ClassScanner.createPersistentInfo(TestClass.class);
+
+        assertEquals("ID", pi.getIdField());
+        assertTrue(pi.getColumn2field().containsKey(pi.getIdField()));
+    }
+
+    @Carbonated
+    private static final class IdAnnotationTest {
+        @Id
+        @Persist(column = "mi_XedC_asE")
+        private Integer foo;
+    }
+    @Test
+    public void shouldReadIdAnnotationColumnNameWhenPresent() {
+        PersistenceInfo<IdAnnotationTest> pi = ClassScanner.createPersistentInfo(IdAnnotationTest.class);
+        
+        assertEquals("mi_XedC_asE", pi.getIdField());
+        assertTrue(pi.getColumn2field().containsKey(pi.getIdField()));
+    }
+
+    @Carbonated
+    private static final class MultipleIdAnnotationTest {
+        @Id
+        private Integer a;
+        @Id
+        private Integer b;
+    }
+    @Test(expected = Exception.class)
+    public void shouldThrowWhenMultipleIdAnnotations() {
+        ClassScanner.createPersistentInfo(MultipleIdAnnotationTest.class);
+    }
+    
+    @Test
+    public void shouldHaveNullIdFieldIfNoIdAnnotationPresent() {
+        assertNull(ClassScanner.createPersistentInfo(String.class).getIdField());
+    }
+    
+    @Carbonated
+    private static final class CamalizedIdTest {
+        @Id
+        private Integer idWithCamels;
+    }
+    @Test
+    public void shouldConvertCamelCaseIdsTo_UPPER_UNDERSCORE() {
+        assertEquals("ID_WITH_CAMELS", ClassScanner.createPersistentInfo(CamalizedIdTest.class).getIdField());
     }
 }

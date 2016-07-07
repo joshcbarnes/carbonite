@@ -1,6 +1,7 @@
 package com.allocadia.carbonite;
 
 import com.allocadia.carbonite.annotation.Carbonated;
+import com.allocadia.carbonite.annotation.Id;
 import com.allocadia.carbonite.annotation.Persist;
 
 import lombok.Data;
@@ -8,6 +9,9 @@ import lombok.Data;
 @Data
 @Carbonated
 public class TestClass {
+    @Id
+    private Integer id;
+
     @Persist
     private String stringField;
     @Persist

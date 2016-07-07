@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableMap;
 public class PersistenceInfoTest {
     @Test
     public void shouldAliasOriginalName() throws Exception {
-        PersistenceInfo<TestClass> pi = new PersistenceInfo<>(TestClass.class, ImmutableMap.of("STRING_FIELD", TestClass.class.getDeclaredField("stringField")));
+        PersistenceInfo<TestClass> pi = new PersistenceInfo<>(TestClass.class, ImmutableMap.of("STRING_FIELD", TestClass.class.getDeclaredField("stringField")), "ID");
         
         PersistenceInfo<TestClass> fooAlias = pi.aliased("foo");
 
