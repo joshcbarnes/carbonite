@@ -1,15 +1,21 @@
 package com.allocadia.carbonite;
 
-import lombok.Data;
-
 import com.allocadia.carbonite.annotation.Carbonated;
 import com.allocadia.carbonite.annotation.Persist;
+
+import lombok.Data;
 
 @Data
 @Carbonated
 public class TestClass {
     @Persist
-    private String field1;
+    private String stringField;
     @Persist
-    private int field2;
+    private int intField;
+    @Persist
+    private Integer integerField;
+    @Persist(column = "field_NAME")
+    private String customColumnName;
+
+    private String nonPersisted;
 }

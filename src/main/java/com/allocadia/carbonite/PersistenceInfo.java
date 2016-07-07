@@ -32,7 +32,7 @@ public final class PersistenceInfo<T> {
         ImmutableMap.Builder<String, Field> aliasedFields = ImmutableMap.builder();
 
         for (Map.Entry<String, Field> entry : column2field.entrySet()) {
-            aliasedFields.put(alias + '.' + entry.getKey(), entry.getValue());
+            aliasedFields.put(alias + '.' + entry.getKey().replaceFirst(".+\\.", ""), entry.getValue());
         }
 
         return new PersistenceInfo<>(aliasedFields.build(), clazz);

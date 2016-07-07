@@ -16,7 +16,7 @@ import lombok.SneakyThrows;
 
 public class ResultSetReaderTest {
 
-    private static final String COLUMN_LABEL = "FIELD1";
+    private static final String COLUMN_LABEL = "STRING_FIELD";
 
     private ResultSetReader<TestClass> reader;
     
@@ -28,7 +28,7 @@ public class ResultSetReaderTest {
     public void before() {
         MockitoAnnotations.initMocks(this);
         reader = new ResultSetReader<>(new PersistenceInfo<>(TestClass.class, ImmutableMap.of(
-            COLUMN_LABEL, TestClass.class.getDeclaredField("field1")
+            COLUMN_LABEL, TestClass.class.getDeclaredField("stringField")
         )));
         
         Mockito.when(resultSet.next()).thenThrow(new Error("Should never call ResultSet.next when processing a single row!"));
@@ -43,6 +43,6 @@ public class ResultSetReaderTest {
         
         TestClass actual = reader.read(resultSet);
         
-        assertEquals(TEST_VALUE, actual.getField1());
+        assertEquals(TEST_VALUE, actual.getStringField());
     }
 }
