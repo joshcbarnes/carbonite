@@ -1,16 +1,15 @@
 package com.allocadia.carbonite;
 
+import org.springframework.jdbc.core.RowMapper;
+
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
-import java.sql.SQLException;
 import java.util.Date;
 import java.util.Map;
 
 import lombok.Data;
 import lombok.SneakyThrows;
-
-import org.springframework.jdbc.core.RowMapper;
 
 @Data
 public class DynamicRowMapper<T> implements RowMapper<T> {
