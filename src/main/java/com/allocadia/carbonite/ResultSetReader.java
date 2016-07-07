@@ -1,25 +1,21 @@
 package com.allocadia.carbonite;
 
-import org.springframework.jdbc.core.RowMapper;
-
 import java.lang.reflect.Field;
 import java.sql.ResultSet;
 import java.util.Map;
 
 import lombok.SneakyThrows;
 
-public class DynamicRowMapper<T> implements RowMapper<T> {
-    
+public class ResultSetReader<T> {
     private final PersistenceInfo<T> info;
     
-    public DynamicRowMapper(PersistenceInfo<T> info) {
+    public ResultSetReader(PersistenceInfo<T> info) {
         this.info = info;
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @SneakyThrows
-    @Override
-    public T mapRow(ResultSet rs, int rowNum) {
+    public T read(ResultSet rs) {
         final T result = (T) info.getClazz().newInstance();
 
         for (Map.Entry<String, Field> entry : info.getColumn2field().entrySet()) {

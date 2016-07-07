@@ -14,11 +14,11 @@ import java.sql.ResultSet;
 
 import lombok.SneakyThrows;
 
-public class DynamicRowMapperTest {
+public class ResultSetReaderTest {
 
     private static final String COLUMN_LABEL = "FIELD1";
 
-    private DynamicRowMapper<TestClass> rowMapper;
+    private ResultSetReader<TestClass> reader;
     
     @Mock
     private ResultSet resultSet;
@@ -27,7 +27,7 @@ public class DynamicRowMapperTest {
     @SneakyThrows
     public void before() {
         MockitoAnnotations.initMocks(this);
-        rowMapper = new DynamicRowMapper<>(new PersistenceInfo<>(TestClass.class, ImmutableMap.of(
+        reader = new ResultSetReader<>(new PersistenceInfo<>(TestClass.class, ImmutableMap.of(
             COLUMN_LABEL, TestClass.class.getDeclaredField("field1")
         )));
     }
@@ -39,7 +39,7 @@ public class DynamicRowMapperTest {
         
         Mockito.when(resultSet.getObject(COLUMN_LABEL)).thenReturn(TEST_VALUE);
         
-        TestClass actual = rowMapper.mapRow(resultSet, 0);
+        TestClass actual = reader.read(resultSet);
         
         assertEquals(TEST_VALUE, actual.getField1());
     }

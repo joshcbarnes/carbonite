@@ -41,6 +41,6 @@ public class CarboniteQuery<T> extends JdbcDaoSupport {
     }
     
     public List<T> run() {
-        return super.getJdbcTemplate().query(sql, params.toArray(), new DynamicRowMapper<T>(aliasedInfo));
+        return super.getJdbcTemplate().query(sql, params.toArray(), new CarboniteRowMapper<T>(aliasedInfo));
     }
 }
