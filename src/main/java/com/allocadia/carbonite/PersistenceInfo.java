@@ -15,7 +15,7 @@ public final class PersistenceInfo<T> {
     private final ImmutableMap<String, Field> column2field;
 
     public PersistenceInfo(Class<T> clazz, ImmutableMap<String, Field> fields, String idField) {
-        this(fields, idField, Objects.requireNonNull(clazz));
+        this(fields, Objects.requireNonNull(idField), Objects.requireNonNull(clazz));
 
         fields.values().forEach(field -> field.setAccessible(true));
     }

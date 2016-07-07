@@ -2,7 +2,6 @@ package com.allocadia.carbonite;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -17,10 +16,13 @@ import java.util.Map;
 import java.util.Set;
 
 public class ClassScannerTest {
+    private static final class NonCarbonatedClassWithId {
+        @Id
+        private Integer foo;
+    }
     @Test
-    public void shouldWorkOnAnyClass() {
-        ClassScanner.createPersistentInfo(String.class);
-        ClassScanner.createPersistentInfo(Object.class);
+    public void shouldWorkOnAnyClass_asLongAsItHasAnId() {
+        ClassScanner.createPersistentInfo(NonCarbonatedClassWithId.class);
         ClassScanner.createPersistentInfo(TestClass.class);
     }
 
@@ -79,10 +81,10 @@ public class ClassScannerTest {
     public void shouldThrowWhenMultipleIdAnnotations() {
         ClassScanner.createPersistentInfo(MultipleIdAnnotationTest.class);
     }
-    
-    @Test
-    public void shouldHaveNullIdFieldIfNoIdAnnotationPresent() {
-        assertNull(ClassScanner.createPersistentInfo(String.class).getIdField());
+
+    @Test(expected = Exception.class)
+    public void shouldThrowWhithNoId() {
+        ClassScanner.createPersistentInfo(String.class);
     }
     
     @Carbonated

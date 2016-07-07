@@ -59,8 +59,7 @@ public class ClassScanner {
     
                     return QueryUtils.camel2underscore(field.getName());
                 })
-                .iterator(),
-            null
+                .iterator()
         );
     }
 
