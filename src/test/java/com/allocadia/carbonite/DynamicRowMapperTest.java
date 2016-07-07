@@ -2,19 +2,17 @@ package com.allocadia.carbonite;
 
 import static org.junit.Assert.assertEquals;
 
-import java.lang.reflect.Field;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.util.HashMap;
-import java.util.Map;
-
-import lombok.SneakyThrows;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+
+import com.google.common.collect.ImmutableMap;
+
+import java.sql.ResultSet;
+
+import lombok.SneakyThrows;
 
 public class DynamicRowMapperTest {
 
@@ -29,11 +27,9 @@ public class DynamicRowMapperTest {
     @SneakyThrows
     public void before() {
         MockitoAnnotations.initMocks(this);
-        Map<String, Field> fieldMap = new HashMap<>();
-        Field field1 = TestClass.class.getDeclaredField("field1");
-        field1.setAccessible(true);
-        fieldMap.put(COLUMN_LABEL, field1);
-        rowMapper = new DynamicRowMapper<>(TestClass.class, "alias", fieldMap);
+        rowMapper = new DynamicRowMapper<>(new PersistenceInfo<>(TestClass.class, ImmutableMap.of(
+            COLUMN_LABEL, TestClass.class.getDeclaredField("field1")
+        )));
     }
     
     @Test
@@ -41,11 +37,7 @@ public class DynamicRowMapperTest {
     public void testMapRow() {
         String TEST_VALUE = "TEST";
         
-        ResultSetMetaData metadata = Mockito.mock(ResultSetMetaData.class);
-        Mockito.when(resultSet.getMetaData()).thenReturn(metadata);
-        Mockito.when(metadata.getColumnCount()).thenReturn(1);
-        Mockito.when(metadata.getColumnLabel(1)).thenReturn(COLUMN_LABEL);
-        Mockito.when(resultSet.getObject(1)).thenReturn(TEST_VALUE);
+        Mockito.when(resultSet.getObject(COLUMN_LABEL)).thenReturn(TEST_VALUE);
         
         TestClass actual = rowMapper.mapRow(resultSet, 0);
         

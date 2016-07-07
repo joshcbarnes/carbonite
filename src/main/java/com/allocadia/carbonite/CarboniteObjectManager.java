@@ -11,8 +11,10 @@ public class CarboniteObjectManager {
     @NonNull
     private DataSource dataSource;
     
+    private Carbonite carbonite;
+    
     public <T> CarboniteQuery<T> newQuery(Class<T> resultClass) {
-        CarboniteQuery<T> carboniteQuery = new CarboniteQuery<T>(resultClass);
+        CarboniteQuery<T> carboniteQuery = new CarboniteQuery<>(carbonite.getPersistenceInfo(resultClass));
         carboniteQuery.setDataSource(dataSource);
         return carboniteQuery;
     }
