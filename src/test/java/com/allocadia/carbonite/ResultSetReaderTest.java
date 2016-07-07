@@ -30,6 +30,8 @@ public class ResultSetReaderTest {
         reader = new ResultSetReader<>(new PersistenceInfo<>(TestClass.class, ImmutableMap.of(
             COLUMN_LABEL, TestClass.class.getDeclaredField("field1")
         )));
+        
+        Mockito.when(resultSet.next()).thenThrow(new Error("Should never call ResultSet.next when processing a single row!"));
     }
     
     @Test
