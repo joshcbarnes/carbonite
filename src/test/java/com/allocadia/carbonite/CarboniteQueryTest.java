@@ -3,9 +3,6 @@ package com.allocadia.carbonite;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-
 import org.junit.Before;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -15,6 +12,9 @@ import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import com.allocadia.carbonite.annotation.Persist;
 import com.allocadia.carbonite.utils.QueryUtils;
+
+import java.lang.reflect.Field;
+import java.util.Map;
 
 public class CarboniteQueryTest {
 
@@ -26,7 +26,10 @@ public class CarboniteQueryTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        query = Mockito.spy(new CarboniteQuery<TestClass>(TestClass.class));
+        PersistedObjectCache pom = new PersistedObjectCache();
+        PersistenceInfo<TestClass> pi = ClassScanner.createPersistentInfo(TestClass.class);
+        
+        query = Mockito.spy(new CarboniteQuery<TestClass>(pom, pi));
         Mockito.doReturn(mockTemplate).when((JdbcDaoSupport) query).getJdbcTemplate();
     }
     

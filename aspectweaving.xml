@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<aspectj>
+    <aspects>
+        <aspect name="com.allocadia.carbonite.aspects.CarbonitePersistenceAspect"/>
+    </aspects>
+</aspectj>
