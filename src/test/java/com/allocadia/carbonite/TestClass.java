@@ -20,6 +20,8 @@ public class TestClass {
     private Integer integerField;
     @Persist(column = "field_NAME")
     private String customColumnName;
+    @Persist
+    public String publicField;
 
     private String nonPersisted;
 }
