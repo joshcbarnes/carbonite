@@ -10,6 +10,8 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import lombok.Data;
 
@@ -20,6 +22,7 @@ public final class PersistenceInfo<T> {
     private final String idField;
     private final Map<String, Field> column2field;
     private final Map<Field, String> field2Column;
+    private final Map<String, Field> fieldName2Field;
 
     public static <T> PersistenceInfo<T> from(Class<T> clazz) {
         return new PersistenceInfo<>(clazz, getTableName(clazz), getFields(clazz), getIdField(clazz));
@@ -38,6 +41,10 @@ public final class PersistenceInfo<T> {
         this.idField = idField;
         this.column2field = fields;
         this.field2Column = fields.inverse();
+        this.fieldName2Field = fields.values().stream()
+            .collect(Collectors.toMap(
+                f -> f.getName(),
+                Function.identity()));
     }
 
     public PersistenceInfo<T> aliased(String alias) {
