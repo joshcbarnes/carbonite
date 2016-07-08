@@ -7,18 +7,29 @@ import java.util.Map;
 import lombok.SneakyThrows;
 
 public class ResultSetReader<T> {
-    private final PersistenceInfo<T> info;
+    private final PersistedObjectCache pom;
+    private final Class<T> tClazz;
+    private final Map<String, Field> column2field;
+    private final String idFieldName;
     
-    public ResultSetReader(PersistenceInfo<T> info) {
-        this.info = info;
+    public ResultSetReader(PersistedObjectCache pom, PersistenceInfo<T> info) {
+        this.pom = pom;
+        this.tClazz = info.getClazz();
+        this.column2field = info.getColumn2field();
+        this.idFieldName = info.getIdField();
+    }
+
+    @SneakyThrows
+    private T createInstance(Object id) {
+        return tClazz.newInstance();
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @SneakyThrows
     public T read(ResultSet rs) {
-        final T result = (T) info.getClazz().newInstance();
+        final T result = pom.getObjectById(tClazz, rs.getObject(idFieldName), this::createInstance);
 
-        for (Map.Entry<String, Field> entry : info.getColumn2field().entrySet()) {
+        for (Map.Entry<String, Field> entry : column2field.entrySet()) {
             final String columnName = entry.getKey();
             final Field field = entry.getValue();
 

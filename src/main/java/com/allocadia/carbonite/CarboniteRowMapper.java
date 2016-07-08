@@ -10,8 +10,8 @@ public class CarboniteRowMapper<T> implements RowMapper<T> {
     
     private final ResultSetReader<T> reader;
     
-    public CarboniteRowMapper(PersistenceInfo<T> info) {
-        this.reader = new ResultSetReader<>(info);
+    public CarboniteRowMapper(PersistedObjectCache pom, PersistenceInfo<T> info) {
+        this.reader = new ResultSetReader<>(pom, info);
     }
 
     @SneakyThrows

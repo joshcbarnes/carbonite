@@ -26,7 +26,10 @@ public class CarboniteQueryTest {
     @Before
     public void before() {
         MockitoAnnotations.initMocks(this);
-        query = Mockito.spy(new CarboniteQuery<TestClass>(ClassScanner.createPersistentInfo(TestClass.class)));
+        PersistedObjectCache pom = new PersistedObjectCache();
+        PersistenceInfo<TestClass> pi = ClassScanner.createPersistentInfo(TestClass.class);
+        
+        query = Mockito.spy(new CarboniteQuery<TestClass>(pom, pi));
         Mockito.doReturn(mockTemplate).when((JdbcDaoSupport) query).getJdbcTemplate();
     }
     

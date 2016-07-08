@@ -9,13 +9,15 @@ import java.util.List;
 
 public class CarboniteQuery<T> extends JdbcDaoSupport {
 
+    private final PersistedObjectCache pom;
     private final PersistenceInfo<T> info;
     private PersistenceInfo<T> aliasedInfo;
 
     private String sql;
     private List<Object> params;
     
-    public CarboniteQuery(PersistenceInfo<T> persistenceInfo) {
+    public CarboniteQuery(PersistedObjectCache pom, PersistenceInfo<T> persistenceInfo) {
+        this.pom = pom;
         this.info = persistenceInfo;
         this.aliasedInfo = this.info;
     }
@@ -41,6 +43,6 @@ public class CarboniteQuery<T> extends JdbcDaoSupport {
     }
     
     public List<T> run() {
-        return super.getJdbcTemplate().query(sql, params.toArray(), new CarboniteRowMapper<T>(aliasedInfo));
+        return super.getJdbcTemplate().query(sql, params.toArray(), new CarboniteRowMapper<T>(pom, aliasedInfo));
     }
 }
