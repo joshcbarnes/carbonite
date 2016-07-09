@@ -57,4 +57,65 @@ public class PersistanceAspectTest {
         assertEquals(null, tmp);
         assertEquals(0, po.getDirty().size());
     }
+
+    @Test
+    public void shouldKeepNewObjectsWithNEWState() {
+        TestClass obj = new TestClass();
+        PersistedObject po = (PersistedObject)obj;
+
+        assertEquals(0, po.getDirty().size());
+        assertEquals(PersistedObject.State.NEW, po.getState());
+
+        obj.setStringField("bar");
+        assertEquals(1, po.getDirty().size());
+        assertEquals(PersistedObject.State.NEW, po.getState());
+    }
+
+    @Test
+    public void shouldClearDirtyWhenMarkedClean() {
+        TestClass obj = new TestClass();
+        PersistedObject po = (PersistedObject)obj;
+
+        obj.setStringField("bar");
+        assertEquals(1, po.getDirty().size());
+        assertEquals(PersistedObject.State.NEW, po.getState());
+
+        po.markClean();
+        assertEquals(0, po.getDirty().size());
+        assertEquals(PersistedObject.State.CLEAN, po.getState());
+    }
+
+    @Test
+    public void shouldChangeFromCleanToDirtyOnSet() {
+        TestClass obj = new TestClass();
+        PersistedObject po = (PersistedObject)obj;
+
+        assertEquals(PersistedObject.State.NEW, po.getState());
+
+        po.markClean();
+        assertEquals(PersistedObject.State.CLEAN, po.getState());
+
+        obj.setStringField("bar");
+        assertEquals(1, po.getDirty().size());
+        assertEquals(PersistedObject.State.DIRTY, po.getState());
+
+        po.markClean();
+        assertEquals(0, po.getDirty().size());
+        assertEquals(PersistedObject.State.CLEAN, po.getState());
+    }
+
+    @Test
+    public void shouldChangeFromCleanToDirtyOnAssign() {
+        TestClass obj = new TestClass();
+        PersistedObject po = (PersistedObject)obj;
+
+        assertEquals(PersistedObject.State.NEW, po.getState());
+
+        po.markClean();
+        assertEquals(PersistedObject.State.CLEAN, po.getState());
+
+        obj.publicField = "bar";
+        assertEquals(1, po.getDirty().size());
+        assertEquals(PersistedObject.State.DIRTY, po.getState());
+    }
 }
