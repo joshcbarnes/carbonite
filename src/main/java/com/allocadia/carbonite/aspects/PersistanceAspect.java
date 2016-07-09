@@ -4,8 +4,11 @@ import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+import com.allocadia.carbonite.CarboniteObjectManager;
 import com.allocadia.carbonite.PersistedObject;
+import com.allocadia.carbonite.transaction.CarboniteTransactionManager;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -46,6 +49,13 @@ public abstract class PersistanceAspect {
 
     @After("fieldSetters() && target(po)")
     public void markFieldDirty(JoinPoint.StaticPart jp, PersistedObject po) {
+        final PersistedObject.State origState = po.getState();
+
         po.markDirty(jp.getSignature().getName());
+
+        if (PersistedObject.State.CLEAN == origState && TransactionSynchronizationManager.isActualTransactionActive()) {
+            final CarboniteObjectManager com = (CarboniteObjectManager) TransactionSynchronizationManager.getResource(CarboniteTransactionManager.OM_KEY);
+            com.getObjectCache().addDirty(po);
+        }
     }
 }
