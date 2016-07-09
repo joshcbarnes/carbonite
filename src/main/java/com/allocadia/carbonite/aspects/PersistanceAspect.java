@@ -14,10 +14,30 @@ import java.util.Set;
 public abstract class PersistanceAspect {
     public static final class PersistedObjectImpl implements PersistedObject {
         private final Set<String> dirty = new HashSet<>();
+        private State state = State.NEW;
 
         @Override
         public Set<String> getDirty() {
             return dirty;
+        }
+
+        @Override
+        public void markDirty(String fieldName) {
+            dirty.add(fieldName);
+            if (state == State.CLEAN) {
+                state = State.DIRTY;
+            }
+        }
+
+        @Override
+        public void markClean() {
+            state = State.CLEAN;
+            dirty.clear();
+        }
+
+        @Override
+        public State getState() {
+            return state;
         }
     }
 
@@ -26,6 +46,6 @@ public abstract class PersistanceAspect {
 
     @After("fieldSetters() && target(po)")
     public void markFieldDirty(JoinPoint.StaticPart jp, PersistedObject po) {
-        po.getDirty().add(jp.getSignature().getName());
+        po.markDirty(jp.getSignature().getName());
     }
 }
