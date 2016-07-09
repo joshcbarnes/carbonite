@@ -13,18 +13,11 @@ public class CarboniteObjectManager {
     
     private Carbonite carbonite;
     
-    private PersistedObjectCache objectManager;
+    private final PersistedObjectCache objectCache = new PersistedObjectCache();
     
     public <T> CarboniteQuery<T> newQuery(Class<T> resultClass) {
-        CarboniteQuery<T> carboniteQuery = new CarboniteQuery<>(getPersistedObjectManager(), carbonite.getPersistenceInfo(resultClass));
+        CarboniteQuery<T> carboniteQuery = new CarboniteQuery<>(objectCache, carbonite.getPersistenceInfo(resultClass));
         carboniteQuery.setDataSource(dataSource);
         return carboniteQuery;
-    }
-    
-    public PersistedObjectCache getPersistedObjectManager() {
-        if (null == objectManager) {
-            objectManager = new PersistedObjectCache();
-        }
-        return objectManager;
     }
 }
