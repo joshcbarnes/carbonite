@@ -6,27 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.google.common.collect.ImmutableMap;
-
-import lombok.SneakyThrows;
-
 public class PersistedObjectCacheTest {
-    @SneakyThrows
-    private static <T> PersistenceInfo<T> createPersistenceInfo(Class<T> clazz) {
-        if (clazz == TestClass.class) {
-            return new PersistenceInfo<>(
-                clazz,
-                ImmutableMap.of(
-                    "ID", TestClass.class.getDeclaredField("id"),
-                    "STRING_FIELD", TestClass.class.getDeclaredField("stringField")
-                ),
-                "ID"
-            );
-        }
-
-        throw new IllegalArgumentException();
-    }
-    
     private static TestClass createTestClass(Integer id) {
         TestClass t = new TestClass();
         t.setId(id);
