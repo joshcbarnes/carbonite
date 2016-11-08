@@ -7,7 +7,7 @@ import com.google.common.collect.Lists;
 import java.util.List;
 
 
-public class CarboniteQuery<T> extends JdbcDaoSupport {
+public class CarboniteQuery<T extends PersistedObject> extends JdbcDaoSupport {
 
     private final PersistedObjectCache pom;
     private final PersistenceInfo<T> info;
@@ -43,6 +43,6 @@ public class CarboniteQuery<T> extends JdbcDaoSupport {
     }
     
     public List<T> run() {
-        return super.getJdbcTemplate().query(sql, params.toArray(), new CarboniteRowMapper<T>(pom, aliasedInfo));
+        return super.getJdbcTemplate().query(sql, params.toArray(), new CarboniteRowMapper<>(pom, aliasedInfo));
     }
 }

@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 
 import lombok.SneakyThrows;
 
-public class CarboniteRowMapper<T> implements RowMapper<T> {
+public class CarboniteRowMapper<T extends PersistedObject> implements RowMapper<T> {
     
     private final ResultSetReader<T> reader;
     
